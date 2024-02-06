@@ -19,7 +19,7 @@ print(api_url)
 
 def send_email(text):
     message = MIMEMultipart("alternative")
-    message["Subject"] = subject
+    message["Subject"] = "Bin day is coming"
     message["From"] = message_from
     message["To"] = message_to
 
