@@ -1,11 +1,9 @@
 import os
-import requests
-from datetime import date
-from dateutil.parser import parse
 import smtplib
+import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
+import bcpapi
 
 uprn = os.environ.get('UPRN')
 message_from = os.environ.get('EMAIL_FROM')
@@ -14,8 +12,6 @@ smtp_user = os.environ.get('SMTP_USER')
 smtp_password = os.environ.get('SMTP_PASSWORD')
 smtp_server = os.environ.get('SMTP_HOST')
 
-api_url = 'https://online.bcpcouncil.gov.uk/bcp-apis/?api=BinDayLookup&uprn=' + uprn
-print(api_url)
 
 def send_email(text):
     message = MIMEMultipart("alternative")
@@ -30,22 +26,12 @@ def send_email(text):
     server.login(smtp_user, smtp_password)
     server.sendmail(message_from, message_to, message.as_string())
 
-def collected_tommorow(bin):
-    today = date.today()
-    next = bin['Next']
-    nt = parse(next)
-    delta = (nt.date() - today).days
-    return delta == 1
 
-r = requests.get(api_url)
-if r.status_code != 200:
-    print(r.status_code)
-    exit()
+data = bcpapi.get_bindays(uprn)
+if data is None:
+    sys.exit(1)
 
-data = r.json()
-print(data)
-
-tommorows_bins = list(filter(collected_tommorow, data))
+tommorows_bins = bcpapi.tommorows_bins(data)
 if len(tommorows_bins) != 0:
     types = list(map(lambda b: b['BinType'], tommorows_bins))
     content = ', '.join(types)
