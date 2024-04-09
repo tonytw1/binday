@@ -11,7 +11,7 @@ def get_bindays(uprn):
     if r.status_code != 200:
         print(r.status_code)
         return None
-    return r.json
+    return r.json()
 
 
 def tommorows_bins(bins):

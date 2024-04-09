@@ -5,7 +5,7 @@ import json
 
 
 class BcpApiTest(unittest.TestCase):
-    def test(self):
+    def test_tommorows_bins(self):
         with open('bindays.json') as input:
             bins = json.load(input)
             input.close()

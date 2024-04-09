@@ -27,11 +27,11 @@ def send_email(text):
     server.sendmail(message_from, message_to, message.as_string())
 
 
-data = bcpapi.get_bindays(uprn)
-if data is None:
+bins = bcpapi.get_bindays(uprn)
+if bins is None:
     sys.exit(1)
 
-tommorows_bins = bcpapi.tommorows_bins(data)
+tommorows_bins = bcpapi.tommorows_bins(bins)
 if len(tommorows_bins) != 0:
     types = list(map(lambda b: b['BinType'], tommorows_bins))
     content = ', '.join(types)
